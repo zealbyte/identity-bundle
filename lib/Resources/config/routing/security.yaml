@@ -1,0 +1,29 @@
+#
+# Identity Security - Anon Firewall
+# Identity Autenticate - Behind Firewall
+#
+
+identity.secure.login:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_LOGIN
+  path: /login
+  controller: ZealByte\Bundle\IdentityBundle\Controller\SecurityController::loginAction
+  context: modal
+  methods:
+    - GET
+    - POST
+
+identity.secure.logout:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_LOGOUT
+  path: /logout
+  controller: ZealByte\Bundle\IdentityBundle\Controller\SecurityController::logoutAction
+  methods:
+    - GET
+    - POST
+
+identity.secure.recover:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_RECOVER
+  path: /recover
+  controller: ZealByte\Bundle\IdentityBundle\Controller\SecurityController::recoverAction
+  role: IS_AUTHENTICATED_ANONYMOUSLY
+  context: modal
+

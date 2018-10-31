@@ -1,0 +1,18 @@
+#
+# Identity User Pages - Behind Firewall
+#
+
+identity.self:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_SELF
+  path: /self
+  controller: ZealByte\Bundle\IdentityBundle\Controller\UserController::viewSelfAction
+  role: IS_AUTHENTICATED_FULLY
+
+identity.user:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_USER
+  path: /users/{id}
+  controller: ZealByte\Bundle\IdentityBundle\Controller\UserController::viewAction
+  role: IS_AUTHENTICATED_FULLY
+  requirements:
+    id: '\d+'
+

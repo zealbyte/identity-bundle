@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<services>
+		<defaults public="false" />
+
+		<prototype namespace="ZealByte\Bundle\IdentityBundle\Controller\" resource="../../Controller" autowire="true" autoconfigure="true">
+			<tag name="controller.service_arguments" />
+		</prototype>
+
+		<service id="ZealByte\Identity\UserManager" public="false">
+			<argument type="service" id="database_connection" />
+			<argument type="service" id="catalog.factory" />
+			<argument type="service" id="catalog.registry" />
+			<argument type="service" id="event_dispatcher" />
+			<!-- <argument type="service" id="security.token_storage" /> -->
+		</service>
+		<service id="identity.user_manager" alias="ZealByte\Identity\UserManager" public="true" />
+
+		<service id="ZealByte\Identity\RecoverBroker" public="false">
+			<argument type="service" id="catalog.factory" />
+			<argument type="service" id="catalog.registry" />
+			<argument type="service" id="Symfony\Component\Workflow\Registry" />
+		</service>
+
+		<service id="ZealByte\Identity\Security\User\IdentityUserProvider">
+			<argument type="service" id="ZealByte\Identity\UserManager" />
+			<argument type="service" id="session" />
+			<argument>%identity.config.user_provider%</argument>
+		</service>
+
+		<service id="ZealByte\Identity\Security\User\IdentityUserChecker" public="false">
+			<argument type="service" id="catalog.factory" />
+			<argument type="service" id="catalog.registry" />
+		</service>
+
+		<service id="ZealByte\Identity\Security\Authentication\Provider\IdentityAuthenticationProvider" abstract="true" public="false">
+			<argument>yepp</argument>
+			<argument /> <!-- User Provider -->
+			<argument type="service" id="ZealByte\Identity\Security\User\IdentityUserChecker" />
+			<argument /> <!-- Provider-shared Key -->
+			<argument type="service" id="security.encoder_factory" />
+			<argument>%security.authentication.hide_user_not_found%</argument>
+		</service>
+
+		<service id="ZealByte\Identity\Security\Firewall\IdentityAuthenticationListener" parent="security.authentication.listener.abstract" public="false" abstract="true" />
+
+		<!-- Event Subscribers -->
+		<service id="ZealByte\Identity\EventListener\ControllerRoleSubscriber" public="false">
+			<argument type="service" id="security.authorization_checker" />
+			<tag name="kernel.event_subscriber" />
+		</service>
+
+		<service id="ZealByte\Identity\EventListener\IdentityMessagesSubscriber" public="false">
+			<argument type="service" id="security.authentication_utils" />
+			<argument type="service" id="messages" />
+			<tag name="kernel.event_subscriber" />
+		</service>
+
+		<service id="ZealByte\Identity\EventListener\SecurityExceptionSubscriber" public="false">
+			<argument type="service" id="security.authentication_utils" />
+			<argument type="service" id="messages" />
+			<tag name="kernel.event_subscriber" />
+		</service>
+
+		<service id="ZealByte\Identity\EventListener\LoginFormSubscriber" public="false">
+			<argument type="service" id="form.factory" />
+			<argument type="service" id="request_stack" on-invalid="null" />
+			<argument type="service" id="router" on-invalid="null" />
+			<argument>true</argument>
+			<tag name="kernel.event_subscriber" />
+		</service>
+
+		<service id="ZealByte\Identity\EventListener\RecoverFormSubscriber" public="false">
+			<argument type="service" id="ZealByte\Identity\RecoverBroker" />
+			<argument type="service" id="ZealByte\Platform\Context\ContextFactory" />
+			<argument type="service" id="form.factory" />
+			<argument type="service" id="request_stack" on-invalid="null" />
+			<argument type="service" id="router" on-invalid="null" />
+			<tag name="kernel.event_subscriber" />
+		</service>
+
+		<service id="ZealByte\Identity\EventListener\RecoverWorkflowFormSubscriber" public="false">
+			<argument type="service" id="ZealByte\Platform\Context\ContextFactory" />
+			<argument type="service" id="form.factory" />
+			<argument type="service" id="request_stack" on-invalid="null" />
+			<argument type="service" id="router" on-invalid="null" />
+			<tag name="kernel.event_subscriber" />
+		</service>
+
+
+		<!-- From Types -->
+		<service id="ZealByte\Identity\Form\Extension\Identity\Type\UserIdType">
+			<argument type="service" id="ZealByte\Identity\UserManager" />
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Identity\Type\UserType">
+			<argument type="service" id="ZealByte\Identity\UserManager" />
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Identity\Type\IdentitySubmitType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Login\Type\LoginPasswordType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Login\Type\LoginRememberMeType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Login\Type\LoginTargetType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Login\Type\LoginUsernameType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Login\Type\LoginFormType">
+			<argument type="service" id="request_stack"/>
+			<argument type="service" id="security.authentication_utils" />
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Recover\Type\RecoverRequestType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Recover\Type\RecoverRsvpSentType">
+			<tag name="form.type" />
+		</service>
+
+		<service id="ZealByte\Identity\Form\Extension\Register\Type\RegisterFormType">
+			<tag name="form.type" />
+		</service>
+
+		<!-- User Object and Action -->
+		<service id="ZealByte\Identity\Catalog\IdentityRecoverSpec">
+			<argument type="service" id="doctrine" />
+			<tag name="catalog.spec" category="identity" alias="recover_token" />
+		</service>
+
+	</services>
+</container>

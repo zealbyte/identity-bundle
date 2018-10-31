@@ -1,0 +1,11 @@
+#
+# Identity Registration - Anon Firewall
+#
+
+identity.registration.register:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_REGISTER
+  path: /register
+  controller: ZealByte\Bundle\IdentityBundle\Controller\RegistrationController::registerAction
+  role: IS_AUTHENTICATED_ANONYMOUSLY
+  context: modal
+

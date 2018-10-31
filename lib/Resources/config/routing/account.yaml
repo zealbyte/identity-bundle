@@ -1,0 +1,11 @@
+#
+# Identity Account Pages - Behind Firewall
+#
+
+identity.account:
+  name: !php/const ZealByte\Identity\ZealByteIdentity::ROUTE_ACCOUNT
+  path: /myaccount/{section}
+  controller: ZealByte\Bundle\IdentityBundle\Controller\AccountController::viewAccountAction
+  role: IS_AUTHENTICATED_FULLY
+  defaults:
+    section: 'index'
