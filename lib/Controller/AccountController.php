@@ -17,12 +17,18 @@ namespace ZealByte\Bundle\IdentityBundle\Controller
 
 		public function viewAccountAction (Request $request, ?string $section = 'index')
 		{
-			$selfComponent = new ControllerComponent(ZealByteIdentity::ROUTE_SELF);
+			$components = [
+				new ControllerComponent(ZealByteIdentity::ROUTE_SELF),
+				new ControllerComponent(ZealByteIdentity::ROUTE_USER, ['id'=>13]),
+			];
 
 			$container = (new ContainerComponent())
 				->setView('@Identity/components.html.twig')
-				->setBlock('account_container')
-				->addComponent($selfComponent);
+				->setBlock('account_container');
+
+			foreach ( $components as $component ) {
+				$container->addComponent($component);
+			}
 
 			return $this->createContext($request, $container, [
 				'title' => 'myaccount',
